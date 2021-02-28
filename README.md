@@ -1,2 +1,2 @@
 # Gradle-Basics
-Basic multi module java project templates with gradle
+Basic templates for gradle projects
