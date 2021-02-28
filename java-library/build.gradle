@@ -1,0 +1,59 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+}
+
+version = '1.0.0'
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    jcenter()
+}
+
+java {
+    compileJava {
+        options.incremental = true
+        options.fork = true
+    }
+
+    compileTestJava {
+        options.incremental = true
+        options.fork = true
+    }
+
+    //Java toolchain is a set of tool that are used to configure different aspects of a build.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(15)
+    }
+}
+
+dependencies {
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+    api 'org.apache.commons:commons-math3:3.6.1'
+
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'com.google.guava:guava:29.0-jre'
+
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+}
+
+//Create Uber jar of the library
+task uberJar(type: Jar) {
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+}
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}
